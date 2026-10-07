@@ -1,0 +1,436 @@
+/* =========================================
+   SMART EVENT - TICKET VERIFICATION
+========================================= */
+
+.ticket-verification-page {
+  min-height: calc(100vh - 85px);
+  padding: 70px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.ticket-verification-card {
+  width: 100%;
+  max-width: 760px;
+  padding: 42px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow:
+    0 20px 55px rgba(15, 23, 42, 0.12);
+}
+
+/* Header */
+
+.ticket-verification-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 35px;
+}
+
+.verification-icon {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      #4f46e5,
+      #7c3aed
+    );
+  color: white;
+  font-size: 32px;
+  font-weight: 800;
+  box-shadow:
+    0 12px 25px rgba(79, 70, 229, 0.25);
+}
+
+.verification-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #6366f1;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.ticket-verification-header h2 {
+  margin: 0 0 7px;
+  color: #1e1b4b;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.ticket-verification-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Form */
+
+.verification-form {
+  padding: 25px;
+  background:
+    linear-gradient(
+      135deg,
+      #f8faff,
+      #f5f3ff
+    );
+  border: 1px solid #e0e7ff;
+  border-radius: 18px;
+}
+
+.verification-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.verification-input-group label {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.verification-input-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  outline: none;
+  background: white;
+  color: #1e293b;
+  font-size: 15px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.verification-input-group input::placeholder {
+  color: #94a3b8;
+}
+
+.verification-input-group input:focus {
+  border-color: #6366f1;
+  box-shadow:
+    0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+/* Button */
+
+.verification-button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      135deg,
+      #4f46e5,
+      #7c3aed
+    );
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow:
+    0 10px 20px rgba(79, 70, 229, 0.20);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.verification-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 25px rgba(79, 70, 229, 0.28);
+}
+
+.verification-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.verification-spinner {
+  display: inline-block;
+  margin-right: 7px;
+  animation: verificationSpin 0.8s linear infinite;
+}
+
+@keyframes verificationSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Messages */
+
+.verification-message {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-radius: 13px;
+}
+
+.verification-message > span {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.verification-message strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.verification-message p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.verification-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.verification-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+/* Verified Ticket */
+
+.verified-ticket {
+  margin-top: 25px;
+  overflow: hidden;
+  border: 1px solid #c7d2fe;
+  border-radius: 20px;
+  background: white;
+  box-shadow:
+    0 12px 30px rgba(79, 70, 229, 0.10);
+}
+
+.verified-ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 20px 22px;
+  background:
+    linear-gradient(
+      135deg,
+      #eef2ff,
+      #f5f3ff
+    );
+  border-bottom: 1px solid #e0e7ff;
+}
+
+.verified-ticket-header > div {
+  min-width: 0;
+}
+
+.verified-ticket-header span {
+  display: block;
+  margin-bottom: 5px;
+  color: #6366f1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.verified-ticket-header h3 {
+  margin: 0;
+  color: #1e1b4b;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.verified-ticket-header > strong {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Ticket Body */
+
+.verified-ticket-body {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  padding: 25px;
+}
+
+.verified-ticket-details {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.verified-detail {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #f8fafc;
+}
+
+.verified-detail span {
+  display: block;
+  margin-bottom: 5px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.verified-detail strong {
+  display: block;
+  color: #334155;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.verified-status {
+  color: #15803d !important;
+}
+
+/* QR */
+
+.verified-qr-section {
+  flex-shrink: 0;
+  width: 170px;
+  text-align: center;
+}
+
+.verified-ticket-qr {
+  width: 150px;
+  height: 150px;
+  display: block;
+  margin: 0 auto 10px;
+  padding: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.verified-qr-section p {
+  margin: 0;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Information */
+
+.verification-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 13px 15px;
+  border-radius: 11px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.verification-info > span {
+  font-size: 17px;
+}
+
+.verification-info p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+  .ticket-verification-page {
+    padding: 40px 15px;
+  }
+
+  .ticket-verification-card {
+    padding: 25px 18px;
+    border-radius: 18px;
+  }
+
+  .ticket-verification-header {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .verification-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    font-size: 26px;
+  }
+
+  .ticket-verification-header h2 {
+    font-size: 25px;
+  }
+
+  .ticket-verification-header p {
+    font-size: 13px;
+  }
+
+  .verified-ticket-body {
+    flex-direction: column;
+  }
+
+  .verified-ticket-details {
+    width: 100%;
+  }
+
+  .verified-qr-section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticket-verification-header {
+    flex-direction: column;
+  }
+
+  .verification-form {
+    padding: 18px;
+  }
+
+  .verified-ticket-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .verified-ticket-details {
+    grid-template-columns: 1fr;
+  }
+
+  .verified-ticket-body {
+    padding: 18px;
+  }
+}

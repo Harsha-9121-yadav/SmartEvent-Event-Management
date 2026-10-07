@@ -1,0 +1,520 @@
+/* =========================================
+   SMART EVENT - NOTIFICATION DROPDOWN
+========================================= */
+
+.notification-dropdown-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+
+/* =========================================
+   NOTIFICATION BUTTON
+========================================= */
+
+.notification-dropdown-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  position: relative;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #334155;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notification-dropdown-button:hover {
+  color: #4f46e5;
+}
+
+.notification-dropdown-button:focus {
+  outline: none;
+}
+
+
+/* Bell */
+
+.notification-bell {
+  font-size: 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =========================================
+   UNREAD BADGE
+========================================= */
+
+.notification-badge {
+  min-width: 20px;
+  height: 20px;
+
+  padding: 0 6px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: #ef4444;
+  color: white;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  box-shadow:
+    0 3px 8px rgba(239, 68, 68, 0.25);
+
+  animation: notificationPulse 2s infinite;
+}
+
+@keyframes notificationPulse {
+
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(239, 68, 68, 0.35);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 6px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(239, 68, 68, 0);
+  }
+
+}
+
+
+/* =========================================
+   DROPDOWN
+========================================= */
+
+.notification-dropdown {
+  position: absolute;
+
+  top: calc(100% + 16px);
+  right: 0;
+
+  width: 390px;
+
+  background: rgba(255, 255, 255, 0.98);
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.16);
+
+  overflow: hidden;
+
+  z-index: 1000;
+
+  animation:
+    notificationDropdownAppear
+    0.2s ease;
+}
+
+@keyframes notificationDropdownAppear {
+
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+/* =========================================
+   DROPDOWN HEADER
+========================================= */
+
+.notification-dropdown-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f8f7ff
+    );
+}
+
+.notification-dropdown-header h3 {
+  margin: 0;
+
+  color: #1e293b;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.notification-dropdown-header > span {
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #eef2ff;
+
+  color: #4f46e5;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.notification-dropdown-loading {
+  padding: 30px 20px;
+
+  text-align: center;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.notification-dropdown-empty {
+  padding: 35px 20px;
+
+  text-align: center;
+
+  color: #64748b;
+}
+
+.notification-dropdown-empty div {
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+
+  font-size: 23px;
+}
+
+.notification-dropdown-empty p {
+  margin: 0;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   NOTIFICATION LIST
+========================================= */
+
+.notification-dropdown-list {
+  max-height: 390px;
+
+  overflow-y: auto;
+}
+
+
+/* Custom scrollbar */
+
+.notification-dropdown-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.notification-dropdown-list::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.notification-dropdown-list::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+
+  border-radius: 10px;
+}
+
+
+/* =========================================
+   NOTIFICATION ITEM
+========================================= */
+
+.notification-dropdown-item {
+  display: flex;
+
+  gap: 13px;
+
+  padding: 16px 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notification-dropdown-item:hover {
+  background: #f8faff;
+}
+
+
+/* Unread notification */
+
+.dropdown-notification-unread {
+  background:
+    linear-gradient(
+      90deg,
+      #eef2ff,
+      #ffffff
+    );
+}
+
+
+/* Read notification */
+
+.dropdown-notification-read {
+  background: white;
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.dropdown-notification-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #eef2ff;
+
+  font-size: 17px;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.dropdown-notification-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.dropdown-notification-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 5px;
+}
+
+.dropdown-notification-title strong {
+  color: #1e293b;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.dropdown-notification-title span {
+  padding: 3px 6px;
+
+  border-radius: 5px;
+
+  background: #4f46e5;
+
+  color: white;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  letter-spacing: 0.5px;
+}
+
+.dropdown-notification-content p {
+  margin: 0 0 7px;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.dropdown-notification-content small {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   MARK AS READ
+========================================= */
+
+.dropdown-mark-read-button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #4f46e5;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.dropdown-mark-read-button:hover {
+  color: #3730a3;
+
+  text-decoration: underline;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.notification-dropdown-footer {
+  padding: 12px 16px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+.notification-dropdown-footer button {
+  width: 100%;
+
+  padding: 10px 14px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #4f46e5;
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notification-dropdown-footer button:hover {
+  background: #4338ca;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .notification-dropdown {
+    position: fixed;
+
+    top: 125px;
+    left: 50%;
+
+    right: auto;
+
+    width: calc(100vw - 30px);
+
+    max-width: 390px;
+
+    transform: translateX(-50%);
+  }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .notification-dropdown-button {
+    font-size: 14px;
+  }
+
+  .notification-dropdown {
+    top: 120px;
+
+    width: calc(100vw - 24px);
+
+    border-radius: 15px;
+  }
+
+  .notification-dropdown-item {
+    padding: 14px;
+  }
+
+}
