@@ -10,6 +10,7 @@ from database import get_db
 from models import Booking, Event, User, Notification, Ticket
 from schemas import BookingCreate, BookingResponse
 from security import bearer_scheme, get_current_user_id
+from role_dependencies import require_organizer
 
 
 router = APIRouter(
@@ -32,7 +33,6 @@ def create_booking(
 ):
     user_id = get_current_user_id(credentials)
 
-    # Check user
     user = db.query(User).filter(
         User.id == user_id
     ).first()
@@ -43,7 +43,6 @@ def create_booking(
             detail="User not found"
         )
 
-    # Check event
     event = db.query(Event).filter(
         Event.id == booking_data.event_id
     ).first()
@@ -54,20 +53,17 @@ def create_booking(
             detail="Event not found"
         )
 
-    # Check ticket availability
     if event.available_tickets < booking_data.ticket_quantity:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Not enough tickets available"
         )
 
-    # Calculate total price
     total_price = (
         event.ticket_price *
         booking_data.ticket_quantity
     )
 
-    # Create booking
     new_booking = Booking(
         user_id=user_id,
         event_id=event.id,
@@ -76,19 +72,13 @@ def create_booking(
         booking_status="CONFIRMED"
     )
 
-    # Reduce available tickets
     event.available_tickets -= (
         booking_data.ticket_quantity
     )
 
     db.add(new_booking)
 
-    # Get booking ID before creating ticket
     db.flush()
-
-    # =========================
-    # GENERATE QR TICKET
-    # =========================
 
     ticket_code = (
         f"SME-{uuid.uuid4().hex[:12].upper()}"
@@ -122,7 +112,6 @@ def create_booking(
         f"/static/qrcodes/{qr_file_name}"
     )
 
-    # Create ticket record
     new_ticket = Ticket(
         booking_id=new_booking.id,
         ticket_code=ticket_code,
@@ -130,10 +119,6 @@ def create_booking(
     )
 
     db.add(new_ticket)
-
-    # =========================
-    # BOOKING NOTIFICATION
-    # =========================
 
     notification = Notification(
         user_id=user_id,
@@ -151,7 +136,6 @@ def create_booking(
 
     db.add(notification)
 
-    # Save everything
     db.commit()
 
     db.refresh(new_booking)
@@ -183,6 +167,113 @@ def get_my_bookings(
     )
 
     return bookings
+
+
+@router.get(
+    "/organizer/bookings",
+    response_model=list[BookingResponse]
+)
+def get_organizer_bookings(
+    current_user: User = Depends(
+        require_organizer
+    ),
+    db: Session = Depends(get_db)
+):
+    bookings = (
+        db.query(Booking)
+        .join(
+            Event,
+            Booking.event_id == Event.id
+        )
+        .filter(
+            Event.organizer_id == current_user.id
+        )
+        .order_by(
+            Booking.created_at.desc()
+        )
+        .all()
+    )
+
+    return bookings
+
+
+@router.get(
+    "/organizer/insights"
+)
+def get_organizer_insights(
+    current_user: User = Depends(
+        require_organizer
+    ),
+    db: Session = Depends(get_db)
+):
+    events = (
+        db.query(Event)
+        .filter(
+            Event.organizer_id == current_user.id
+        )
+        .order_by(
+            Event.event_date.asc()
+        )
+        .all()
+    )
+
+    insights = []
+
+    for event in events:
+        bookings = (
+            db.query(Booking)
+            .filter(
+                Booking.event_id == event.id
+            )
+            .all()
+        )
+
+        confirmed_bookings = [
+            booking
+            for booking in bookings
+            if booking.booking_status == "CONFIRMED"
+        ]
+
+        booking_count = len(
+            confirmed_bookings
+        )
+
+        total_tickets_sold = sum(
+            booking.ticket_quantity
+            for booking in confirmed_bookings
+        )
+
+        total_revenue = sum(
+            booking.total_price
+            for booking in confirmed_bookings
+        )
+
+        insights.append(
+            {
+                "event_id": event.id,
+                "event_title": event.title,
+                "event_status": event.event_status,
+                "total_tickets": event.total_tickets,
+                "tickets_sold": total_tickets_sold,
+                "remaining_tickets": event.available_tickets,
+                "booking_count": booking_count,
+                "total_revenue": total_revenue
+            }
+        )
+
+    return {
+        "organizer_id": current_user.id,
+        "total_events": len(events),
+        "total_tickets_sold": sum(
+            item["tickets_sold"]
+            for item in insights
+        ),
+        "total_revenue": sum(
+            item["total_revenue"]
+            for item in insights
+        ),
+        "events": insights
+    }
 
 
 @router.get(
@@ -251,7 +342,6 @@ def cancel_booking(
             detail="Booking not found"
         )
 
-    # Check ownership
     if booking.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -261,14 +351,12 @@ def cancel_booking(
             )
         )
 
-    # Already cancelled
     if booking.booking_status == "CANCELLED":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Booking is already cancelled"
         )
 
-    # Only confirmed bookings can be cancelled
     if booking.booking_status != "CONFIRMED":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -278,7 +366,6 @@ def cancel_booking(
             )
         )
 
-    # Restore event tickets
     event = (
         db.query(Event)
         .filter(
@@ -292,10 +379,8 @@ def cancel_booking(
             booking.ticket_quantity
         )
 
-    # Update booking status
     booking.booking_status = "CANCELLED"
 
-    # Booking cancellation notification
     notification = Notification(
         user_id=user_id,
         title="Booking Cancelled",

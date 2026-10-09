@@ -5,41 +5,42 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 # =========================
-# USER REGISTRATION
+# USER SCHEMAS
 # =========================
 
 class UserCreate(BaseModel):
-    username: str = Field(min_length=3, max_length=100)
+    username: str = Field(
+        min_length=3,
+        max_length=100
+    )
+
     email: EmailStr
-    password: str = Field(min_length=6, max_length=100)
 
+    password: str = Field(
+        min_length=6,
+        max_length=100
+    )
 
-# =========================
-# USER RESPONSE
-# =========================
 
 class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    role: Literal[
+        "USER",
+        "ORGANIZER",
+        "ADMIN"
+    ]
     created_at: datetime
 
     class Config:
         from_attributes = True
 
 
-# =========================
-# LOGIN
-# =========================
-
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-
-# =========================
-# JWT TOKEN
-# =========================
 
 class Token(BaseModel):
     access_token: str
@@ -47,23 +48,43 @@ class Token(BaseModel):
 
 
 # =========================
-# EVENT CREATE
+# EVENT SCHEMAS
 # =========================
 
 class EventCreate(BaseModel):
-    title: str = Field(min_length=2, max_length=200)
-    description: str = Field(min_length=5)
-    category: Literal["Music", "Tech", "Sports", "Business"]
-    location: str = Field(min_length=2, max_length=200)
+    title: str = Field(
+        min_length=2,
+        max_length=200
+    )
+
+    description: str = Field(
+        min_length=5
+    )
+
+    category: Literal[
+        "Music",
+        "Tech",
+        "Sports",
+        "Business"
+    ]
+
+    location: str = Field(
+        min_length=2,
+        max_length=200
+    )
+
     event_date: datetime
-    ticket_price: float = Field(gt=0)
+
+    ticket_price: float = Field(
+        gt=0
+    )
+
     banner_image: str | None = None
-    total_tickets: int = Field(gt=0)
 
+    total_tickets: int = Field(
+        gt=0
+    )
 
-# =========================
-# EVENT RESPONSE
-# =========================
 
 class EventResponse(BaseModel):
     id: int
@@ -76,6 +97,16 @@ class EventResponse(BaseModel):
     banner_image: str | None
     total_tickets: int
     available_tickets: int
+
+    organizer_id: int | None
+
+    event_status: Literal[
+        "UPCOMING",
+        "ONGOING",
+        "COMPLETED",
+        "CANCELLED"
+    ]
+
     created_at: datetime
 
     class Config:
@@ -83,17 +114,16 @@ class EventResponse(BaseModel):
 
 
 # =========================
-# BOOKING CREATE
+# BOOKING SCHEMAS
 # =========================
 
 class BookingCreate(BaseModel):
     event_id: int
-    ticket_quantity: int = Field(gt=0)
 
+    ticket_quantity: int = Field(
+        gt=0
+    )
 
-# =========================
-# BOOKING RESPONSE
-# =========================
 
 class BookingResponse(BaseModel):
     id: int
@@ -109,7 +139,7 @@ class BookingResponse(BaseModel):
 
 
 # =========================
-# TICKET RESPONSE
+# TICKET SCHEMAS
 # =========================
 
 class TicketResponse(BaseModel):
@@ -124,7 +154,7 @@ class TicketResponse(BaseModel):
 
 
 # =========================
-# NOTIFICATION RESPONSE
+# NOTIFICATION SCHEMAS
 # =========================
 
 class NotificationResponse(BaseModel):

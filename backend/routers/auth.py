@@ -4,7 +4,12 @@ from fastapi.security import HTTPAuthorizationCredentials
 
 from database import get_db
 from models import User
-from schemas import UserCreate, UserResponse, LoginRequest, Token
+from schemas import (
+    UserCreate,
+    UserResponse,
+    LoginRequest,
+    Token
+)
 from security import (
     hash_password,
     verify_password,
@@ -57,7 +62,10 @@ def register(
     new_user = User(
         username=user_data.username,
         email=user_data.email,
-        hashed_password=hash_password(user_data.password)
+        hashed_password=hash_password(
+            user_data.password
+        ),
+        role="USER"
     )
 
     db.add(new_user)
@@ -99,7 +107,10 @@ def login(
             detail="Invalid email or password"
         )
 
-    access_token = create_access_token(user.id)
+    access_token = create_access_token(
+        user.id,
+        user.role
+    )
 
     return {
         "access_token": access_token,
@@ -122,7 +133,9 @@ def get_profile(
     db: Session = Depends(get_db)
 ):
 
-    user_id = get_current_user_id(credentials)
+    user_id = get_current_user_id(
+        credentials
+    )
 
     user = db.query(User).filter(
         User.id == user_id

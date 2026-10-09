@@ -15,6 +15,7 @@ from routers.events import router as events_router
 from routers.bookings import router as bookings_router
 from routers.tickets import router as tickets_router
 from routers.notifications import router as notifications_router
+from routers.admin import router as admin_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -36,9 +37,7 @@ async def event_reminder_checker():
             try:
 
                 now = datetime.utcnow()
-                reminder_limit = (
-                    now + timedelta(hours=24)
-                )
+                reminder_limit = now + timedelta(hours=24)
 
                 upcoming_events = (
                     db.query(models.Event)
@@ -63,16 +62,11 @@ async def event_reminder_checker():
                     for booking in bookings:
 
                         existing_notification = (
-                            db.query(
-                                models.Notification
-                            )
+                            db.query(models.Notification)
                             .filter(
-                                models.Notification.user_id
-                                == booking.user_id,
-                                models.Notification.type
-                                == "EVENT",
-                                models.Notification.title
-                                == "Upcoming Event Reminder",
+                                models.Notification.user_id == booking.user_id,
+                                models.Notification.type == "EVENT",
+                                models.Notification.title == "Upcoming Event Reminder",
                                 models.Notification.message.contains(
                                     f"'{event.title}'"
                                 )
@@ -100,7 +94,6 @@ async def event_reminder_checker():
                 db.commit()
 
             finally:
-
                 db.close()
 
         except Exception as error:
@@ -154,11 +147,15 @@ app.add_middleware(
 )
 
 
+# Register existing routers
 app.include_router(auth_router)
 app.include_router(events_router)
 app.include_router(bookings_router)
 app.include_router(tickets_router)
 app.include_router(notifications_router)
+
+# Register Admin Dashboard and Analytics router
+app.include_router(admin_router)
 
 
 @app.get("/")

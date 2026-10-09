@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter,
   Routes,
@@ -20,6 +21,8 @@ import BookingConfirmation from "./pages/BookingConfirmation";
 import Tickets from "./pages/Tickets";
 import Notifications from "./pages/Notifications";
 import TicketVerification from "./pages/TicketVerification";
+import OrganizerDashboard from "./pages/OrganizerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -28,9 +31,7 @@ function App() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchUnreadCount = async () => {
-    const token = localStorage.getItem(
-      "access_token"
-    );
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
       setUnreadCount(0);
@@ -47,15 +48,9 @@ function App() {
         }
       );
 
-      setUnreadCount(
-        response.data.unread_count
-      );
+      setUnreadCount(response.data.unread_count);
     } catch (error) {
-      console.error(
-        "Unread notification count error:",
-        error
-      );
-
+      console.error("Unread notification count error:", error);
       setUnreadCount(0);
     }
   };
@@ -67,50 +62,32 @@ function App() {
       fetchUnreadCount();
     }, 30000);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <BrowserRouter>
       <div className="app">
-
         <Navbar
           unreadCount={unreadCount}
-          onUnreadCountChange={
-            setUnreadCount
-          }
+          onUnreadCountChange={setUnreadCount}
         />
 
         <Routes>
-
           {/* Public Routes */}
 
-          <Route
-            path="/"
-            element={<Home />}
-          />
+          <Route path="/" element={<Home />} />
 
-          <Route
-            path="/events"
-            element={<Events />}
-          />
+          <Route path="/events" element={<Events />} />
 
           <Route
             path="/events/:eventId"
             element={<EventDetails />}
           />
 
-          <Route
-            path="/login"
-            element={<Login />}
-          />
+          <Route path="/login" element={<Login />} />
 
-          <Route
-            path="/register"
-            element={<Register />}
-          />
+          <Route path="/register" element={<Register />} />
 
           {/* Protected Routes */}
 
@@ -168,8 +145,28 @@ function App() {
             }
           />
 
-        </Routes>
+          {/* Organizer Route */}
 
+          <Route
+            path="/organizer-dashboard"
+            element={
+              <ProtectedRoute>
+                <OrganizerDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Route */}
+
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </div>
     </BrowserRouter>
   );
