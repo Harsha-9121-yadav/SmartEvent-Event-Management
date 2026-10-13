@@ -1,161 +1,165 @@
-# SmartEvent - Event Management System
+# SmartEvent – Event Management System
 
-SmartEvent is a full-stack Event Discovery and Ticket Booking System built using FastAPI and React.
-
-The application allows users to discover events, search and filter events, book tickets, manage bookings, receive notifications, access digital QR tickets, and verify tickets.
-
----
+SmartEvent is a full-stack event management application built to simplify event discovery, booking, payment processing, and ticket management. It provides separate functionality for users, organizers, and administrators.
 
 ## Features
 
-### User Authentication
-
-- User registration
-- User login
-- JWT-based authentication
-- Secure password hashing using bcrypt
-- Protected routes
-- User profile
-- Token-based API authentication
-
-### Event Discovery
-
-- View all events
-- View individual event details
-- Search events by title
-- Filter events by category
-- Music, Tech, Sports, and Business categories
-- Event date and location
-- Ticket price
-- Ticket availability
-
-### Ticket Booking
-
-- Book event tickets
-- Select ticket quantity
-- Automatic total price calculation
-- Ticket availability validation
-- Sold-out protection
-- Booking confirmation
-- Booking history
-- Booking ownership validation
-- Booking cancellation
-- Restore ticket availability after cancellation
-
-### Digital QR Tickets
-
-- Automatic QR ticket generation
-- Unique ticket code
-- QR code generation
-- Digital ticket display
-- Event details
-- Booking details
-- QR ticket download
-- Ticket verification
-- Valid and invalid ticket checking
-
-### Notifications
-
-- Booking confirmation notification
-- Booking cancellation notification
-- Upcoming event reminder
-- Notification dropdown
-- Unread notification count
-- Mark notification as read
-- Notifications page
-- Automatic notification dropdown closing during navigation
-
-### Frontend
-
-- React with Vite
-- React Router
-- Axios
-- Protected routes
-- Reusable React components
-- Responsive UI
-- Loading states
-- Error handling
-- Professional user interface
-
----
+- **User Authentication:** User registration and login with JWT-based authentication.
+- **Event Management:** Browse events, view event details, and manage events.
+- **Event Booking:** Book events and view booking history.
+- **Payment Management:** Process payments and track payment status.
+- **Coupon Management:** Apply discount coupons and view discounted prices.
+- **Digital Tickets:** Generate and manage event tickets with QR codes.
+- **Ticket Verification:** Verify tickets using the ticket verification functionality.
+- **Notifications:** View, read, and manage notifications.
+- **Reviews and Ratings:** Submit reviews and view event ratings.
+- **Organizer Dashboard:** Manage events and view booking information.
+- **Admin Dashboard:** Access administrative functionality.
 
 ## Technology Stack
 
 ### Backend
-
 - Python
 - FastAPI
 - SQLAlchemy
 - SQLite
 - Pydantic
-- JWT
-- bcrypt
+- JWT Authentication
 - Uvicorn
-- QRCode
 
 ### Frontend
-
 - React
 - Vite
 - JavaScript
-- React Router
-- Axios
+- HTML
 - CSS
 
----
+### Development Tools
+- Visual Studio Code
+- Git and GitHub
+- Swagger UI for API documentation
 
 ## Project Structure
 
 ```text
-SmartEvent-Event-Management/
-│
+SMART EVENT/
 ├── backend/
-│   ├── routers/
-│   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── bookings.py
-│   │   ├── events.py
-│   │   ├── notifications.py
-│   │   └── tickets.py
-│   │
-│   ├── config.py
-│   ├── database.py
 │   ├── main.py
 │   ├── models.py
-│   ├── requirements.txt
 │   ├── schemas.py
-│   └── security.py
-│
+│   ├── database.py
+│   ├── routers/
+│   └── ...
 ├── frontend/
-│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── EventCard.jsx
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── NotificationDropdown.jsx
-│   │   │   ├── ProtectedRoute.jsx
-│   │   │   └── TicketCard.jsx
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── Booking.jsx
-│   │   │   ├── BookingConfirmation.jsx
-│   │   │   ├── BookingHistory.jsx
-│   │   │   ├── EventDetails.jsx
-│   │   │   ├── Events.jsx
-│   │   │   ├── Home.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── Notifications.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── TicketVerification.jsx
-│   │   │   └── Tickets.jsx
-│   │   │
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
-│   │
 │   ├── package.json
-│   └── vite.config.js
-│
+│   └── ...
 ├── .gitignore
 └── README.md
+```
+
+## Prerequisites
+
+Install the following before running the application:
+
+- Python 3.9 or later
+- Node.js and npm
+- Git
+
+## Installation and Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Harsha-9121-yadav/SmartEvent-Event-Management.git
+cd SmartEvent-Event-Management
+```
+
+### 2. Set Up the Backend
+
+Open a terminal in the project root directory.
+
+Create a Python virtual environment:
+
+```bash
+cd backend
+python -m venv venv
+```
+
+Activate the environment on Windows:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+Install the backend dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Configure any required environment variables and database settings according to the project configuration.
+
+Start the FastAPI server:
+
+```bash
+uvicorn main:app --reload
+```
+
+The backend will normally run at:
+
+`http://127.0.0.1:8000`
+
+### 3. Access API Documentation
+
+Once the backend is running, open:
+
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+These pages provide interactive API documentation.
+
+### 4. Set Up the Frontend
+
+Open a new terminal from the project root:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open the local URL displayed by Vite in your terminal to access the application.
+
+## Database
+
+SmartEvent uses SQLite with SQLAlchemy for database operations. The database stores application information such as users, events, bookings, payments, tickets, coupons, notifications, and reviews.
+
+Run any required database migration scripts before starting the application if your existing database needs to be updated.
+
+## Security
+
+- Authentication using JWT tokens.
+- Password hashing.
+- Protected endpoints and role-based access control.
+- Environment variables for sensitive configuration.
+
+Do not commit passwords, secret keys, access tokens, or other confidential information to GitHub.
+
+## Future Enhancements
+
+- Integration with a production payment gateway.
+- Email and SMS notifications.
+- Cloud deployment.
+- Enhanced analytics and reporting.
+- Automated testing and continuous integration.
+
+## Author
+
+**Harsha Yadav**
+
+GitHub: https://github.com/Harsha-9121-yadav
+
+## License
+
+This project is developed for learning and demonstration purposes.
