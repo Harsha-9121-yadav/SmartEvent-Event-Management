@@ -1,3 +1,4 @@
+
 import asyncio
 import os
 from contextlib import asynccontextmanager
@@ -16,15 +17,33 @@ from routers.bookings import router as bookings_router
 from routers.tickets import router as tickets_router
 from routers.notifications import router as notifications_router
 from routers.admin import router as admin_router
+from routers.payments import router as payments_router
+from routers.coupons import router as coupons_router
+from routers.reviews import router as reviews_router
 
 
+# =========================
+# DATABASE INITIALIZATION
+# =========================
+
+# Importing models above ensures their tables are registered.
+# create_all creates missing tables but does not migrate existing tables.
 Base.metadata.create_all(bind=engine)
+
+
+# =========================
+# STATIC DIRECTORIES
+# =========================
 
 os.makedirs(
     "static/qrcodes",
     exist_ok=True
 )
 
+
+# =========================
+# EVENT REMINDER CHECKER
+# =========================
 
 async def event_reminder_checker():
 
@@ -43,7 +62,8 @@ async def event_reminder_checker():
                     db.query(models.Event)
                     .filter(
                         models.Event.event_date > now,
-                        models.Event.event_date <= reminder_limit
+                        models.Event.event_date <= reminder_limit,
+                        models.Event.event_status != "CANCELLED"
                     )
                     .all()
                 )
@@ -103,8 +123,13 @@ async def event_reminder_checker():
                 error
             )
 
+        # Check for reminders every 60 seconds.
         await asyncio.sleep(60)
 
+
+# =========================
+# APPLICATION LIFESPAN
+# =========================
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -113,15 +138,22 @@ async def lifespan(app: FastAPI):
         event_reminder_checker()
     )
 
-    yield
-
-    reminder_task.cancel()
-
     try:
-        await reminder_task
-    except asyncio.CancelledError:
-        pass
+        yield
 
+    finally:
+        reminder_task.cancel()
+
+        try:
+            await reminder_task
+
+        except asyncio.CancelledError:
+            pass
+
+
+# =========================
+# FASTAPI APPLICATION
+# =========================
 
 app = FastAPI(
     title="SmartEvent API",
@@ -131,12 +163,20 @@ app = FastAPI(
 )
 
 
+# =========================
+# STATIC FILES
+# =========================
+
 app.mount(
     "/static",
     StaticFiles(directory="static"),
     name="static"
 )
 
+
+# =========================
+# CORS CONFIGURATION
+# =========================
 
 app.add_middleware(
     CORSMiddleware,
@@ -147,24 +187,38 @@ app.add_middleware(
 )
 
 
-# Register existing routers
+# =========================
+# REGISTER API ROUTERS
+# =========================
+
 app.include_router(auth_router)
 app.include_router(events_router)
 app.include_router(bookings_router)
 app.include_router(tickets_router)
 app.include_router(notifications_router)
-
-# Register Admin Dashboard and Analytics router
 app.include_router(admin_router)
+app.include_router(payments_router)
+app.include_router(coupons_router)
+app.include_router(reviews_router)
 
+
+# =========================
+# ROOT ENDPOINT
+# =========================
 
 @app.get("/")
 def root():
 
     return {
-        "message": "SmartEvent API is running"
+        "message": "SmartEvent API is running",
+        "docs": "/docs",
+        "health": "/health"
     }
 
+
+# =========================
+# HEALTH CHECK
+# =========================
 
 @app.get("/health")
 def health_check():

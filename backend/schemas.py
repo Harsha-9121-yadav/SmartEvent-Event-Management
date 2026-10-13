@@ -130,7 +130,15 @@ class BookingResponse(BaseModel):
     user_id: int
     event_id: int
     ticket_quantity: int
+
+    # Original booking amount before discount
     total_price: float
+
+    # Applied coupon and discount information
+    coupon_id: int | None = None
+    discount_amount: float = 0.0
+    final_amount: float | None = None
+
     booking_status: str
     created_at: datetime
 

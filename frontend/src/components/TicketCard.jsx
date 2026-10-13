@@ -1,221 +1,103 @@
+
+import "../App.css";
+
 function TicketCard({
   ticket,
   booking,
   event,
-  onDownload
+  onDownload,
 }) {
-  const isCancelled =
-    booking?.booking_status ===
-    "CANCELLED";
-
   return (
-    <div
-      className="ticket-card"
-    >
-
-      {/* Ticket Header */}
-
+    <article className="ticket-card">
       <div className="ticket-card-header">
-
-        <div>
-
-          <span className="ticket-label">
-            SMART EVENT
-          </span>
-
-          <h3>
-            {event?.title ||
-              "Digital Event Ticket"}
-          </h3>
-
-        </div>
-
-        <span
-          className="ticket-status"
-          style={{
-            backgroundColor:
-              isCancelled
-                ? "#fee2e2"
-                : "#dcfce7",
-            color:
-              isCancelled
-                ? "#b91c1c"
-                : "#15803d",
-          }}
-        >
-          {booking?.booking_status ||
-            "CONFIRMED"}
+        <h3>🎫 Digital Ticket</h3>
+        <span className="ticket-code">
+          {ticket.ticket_code}
         </span>
-
       </div>
 
-      {/* Event Details */}
-
-      {event && (
+      {event ? (
         <div className="ticket-event-details">
+          <h4>{event.title}</h4>
 
-          <div className="ticket-info-row">
+          <p>
+            <strong>Category:</strong>{" "}
+            {event.category}
+          </p>
 
-            <span>
-              Event
-            </span>
+          <p>
+            <strong>Location:</strong>{" "}
+            {event.location}
+          </p>
 
-            <strong>
-              {event.title}
-            </strong>
-
-          </div>
-
-          <div className="ticket-info-row">
-
-            <span>
-              Date
-            </span>
-
-            <strong>
-              {new Date(
-                event.event_date
-              ).toLocaleString()}
-            </strong>
-
-          </div>
-
-          <div className="ticket-info-row">
-
-            <span>
-              Location
-            </span>
-
-            <strong>
-              {event.location}
-            </strong>
-
-          </div>
-
-          <div className="ticket-info-row">
-
-            <span>
-              Category
-            </span>
-
-            <strong>
-              {event.category}
-            </strong>
-
-          </div>
-
+          <p>
+            <strong>Event Date:</strong>{" "}
+            {event.event_date
+              ? new Date(
+                  event.event_date
+                ).toLocaleString()
+              : "Not available"}
+          </p>
         </div>
+      ) : (
+        <p>Event details are unavailable.</p>
       )}
 
-      {/* Booking Details */}
+      {booking ? (
+        <div className="ticket-booking-details">
+          <p>
+            <strong>Booking ID:</strong>{" "}
+            {booking.id}
+          </p>
 
-      <div className="ticket-card-content">
+          <p>
+            <strong>Tickets:</strong>{" "}
+            {booking.ticket_quantity}
+          </p>
 
-        <div className="ticket-info">
+          <p>
+            <strong>Booking Status:</strong>{" "}
+            {booking.booking_status}
+          </p>
 
-          <div className="ticket-info-row">
-
-            <span>
-              Ticket Code
-            </span>
-
-            <strong>
-              {ticket.ticket_code}
-            </strong>
-
-          </div>
-
-          <div className="ticket-info-row">
-
-            <span>
-              Booking ID
-            </span>
-
-            <strong>
-              #{ticket.booking_id}
-            </strong>
-
-          </div>
-
-          {booking && (
-            <>
-              <div className="ticket-info-row">
-
-                <span>
-                  Tickets
-                </span>
-
-                <strong>
-                  {booking.ticket_quantity}
-                </strong>
-
-              </div>
-
-              <div className="ticket-info-row">
-
-                <span>
-                  Total Price
-                </span>
-
-                <strong>
-                  ₹
-                  {Number(
-                    booking.total_price
-                  ).toFixed(2)}
-                </strong>
-
-              </div>
-            </>
-          )}
-
-          <div className="ticket-info-row">
-
-            <span>
-              Created
-            </span>
-
-            <strong>
-              {new Date(
-                ticket.created_at
-              ).toLocaleString()}
-            </strong>
-
-          </div>
-
+          <p>
+            <strong>Amount Paid:</strong> ₹
+            {Number(
+              booking.final_amount ??
+                booking.total_price ??
+                0
+            ).toFixed(2)}
+          </p>
         </div>
+      ) : (
+        <p>Booking details are unavailable.</p>
+      )}
 
-        {/* QR Code */}
+      <p>
+        <strong>Ticket Created:</strong>{" "}
+        {ticket.created_at
+          ? new Date(
+              ticket.created_at
+            ).toLocaleString()
+          : "Not available"}
+      </p>
 
-        {ticket.qr_code_url && (
-          <div className="ticket-qr-section">
+      {ticket.qr_code_url ? (
+        <div className="ticket-qr-section">
+          <p>Show your QR code at the event entrance.</p>
 
-            <img
-              src={`http://127.0.0.1:8000${ticket.qr_code_url}`}
-              alt="SmartEvent Ticket QR Code"
-              className="ticket-qr"
-            />
-
-            <p>
-              Scan this QR code
-              at the event entrance.
-            </p>
-
-            <button
-              type="button"
-              className="ticket-download-button"
-              onClick={() =>
-                onDownload(ticket)
-              }
-            >
-              Download QR Ticket
-            </button>
-
-          </div>
-        )}
-
-      </div>
-
-    </div>
+          <button
+            type="button"
+            className="ticket-download-button"
+            onClick={() => onDownload(ticket)}
+          >
+            Download QR Code
+          </button>
+        </div>
+      ) : (
+        <p>QR code is not available.</p>
+      )}
+    </article>
   );
 }
 

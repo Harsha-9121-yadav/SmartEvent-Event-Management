@@ -1,6 +1,9 @@
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
+
+const API_URL = "http://127.0.0.1:8000/api/v1";
 
 function BookingHistory() {
   const [bookings, setBookings] = useState([]);
@@ -22,7 +25,7 @@ function BookingHistory() {
       setError("");
 
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/v1/bookings/my-bookings",
+        `${API_URL}/bookings/my-bookings`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,9 +43,7 @@ function BookingHistory() {
             "Unable to load your bookings."
         );
       } else {
-        setError(
-          "Unable to connect to the backend server."
-        );
+        setError("Unable to connect to the backend server.");
       }
     } finally {
       setLoading(false);
@@ -74,7 +75,7 @@ function BookingHistory() {
       setError("");
 
       await axios.patch(
-        `http://127.0.0.1:8000/api/v1/bookings/${bookingId}/cancel`,
+        `${API_URL}/bookings/${bookingId}/cancel`,
         {},
         {
           headers: {
@@ -93,9 +94,7 @@ function BookingHistory() {
             "Unable to cancel booking."
         );
       } else {
-        setError(
-          "Unable to connect to the backend server."
-        );
+        setError("Unable to connect to the backend server.");
       }
     } finally {
       setCancellingId(null);
@@ -113,7 +112,6 @@ function BookingHistory() {
 
   return (
     <main className="booking-history-page">
-
       <section className="booking-history-header">
         <h2>My Bookings</h2>
 
@@ -123,84 +121,122 @@ function BookingHistory() {
       </section>
 
       {error && (
-        <p className="booking-history-error">
+        <p className="booking-history-error" role="alert">
           {error}
         </p>
       )}
 
       {bookings.length === 0 ? (
-        <p className="booking-history-message">
-          You don't have any bookings yet.
-        </p>
+        <div className="booking-history-message">
+          <p>You don't have any bookings yet.</p>
+        </div>
       ) : (
         <section className="booking-history-container">
+          {bookings.map((booking) => {
+            const originalAmount = Number(
+              booking.total_price ?? 0
+            );
 
-          {bookings.map((booking) => (
-            <div
-              className="booking-history-card"
-              key={booking.id}
-            >
+            const discountAmount = Number(
+              booking.discount_amount ?? 0
+            );
 
-              <h3>
-                🎫 Booking #{booking.id}
-              </h3>
+            const finalAmount = Number(
+              booking.final_amount ?? originalAmount
+            );
 
-              <p>
-                Event ID: {booking.event_id}
-              </p>
+            const hasDiscount = discountAmount > 0;
 
-              <p>
-                Tickets: {booking.ticket_quantity}
-              </p>
+            return (
+              <div
+                className="booking-history-card"
+                key={booking.id}
+              >
+                <h3>🎫 Booking #{booking.id}</h3>
 
-              <p className="booking-price">
-                Total: ₹{booking.total_price}
-              </p>
+                <p>
+                  Event ID: {booking.event_id}
+                </p>
 
-              <p>
-                Status:{" "}
-                <strong
-                  className={
-                    booking.booking_status === "CONFIRMED"
-                      ? "booking-confirmed"
-                      : "booking-cancelled"
-                  }
-                >
-                  {booking.booking_status}
-                </strong>
-              </p>
+                <p>
+                  Tickets: {booking.ticket_quantity}
+                </p>
 
-              <p>
-                Booked on:{" "}
-                {new Date(
-                  booking.created_at
-                ).toLocaleString()}
-              </p>
+                <div className="booking-price-details">
+                  <p>
+                    Original price: ₹
+                    {originalAmount.toFixed(2)}
+                  </p>
 
-              {booking.booking_status === "CONFIRMED" && (
-                <button
-                  className="cancel-booking-button"
-                  onClick={() =>
-                    handleCancel(booking.id)
-                  }
-                  disabled={
-                    cancellingId === booking.id
-                  }
-                >
-                  {cancellingId === booking.id
-                    ? "Cancelling..."
-                    : "Cancel Booking"}
-                </button>
-              )}
+                  {hasDiscount && (
+                    <>
+                      <p>
+                        Coupon discount:{" "}
+                        <strong className="text-success">
+                          -₹{discountAmount.toFixed(2)}
+                        </strong>
+                      </p>
 
-            </div>
-          ))}
+                      <p>
+                        Final price:{" "}
+                        <strong>
+                          ₹{finalAmount.toFixed(2)}
+                        </strong>
+                      </p>
+                    </>
+                  )}
 
+                  {!hasDiscount && (
+                    <p className="booking-price">
+                      Total: ₹{originalAmount.toFixed(2)}
+                    </p>
+                  )}
+                </div>
+
+                <p>
+                  Status:{" "}
+                  <strong
+                    className={
+                      booking.booking_status === "CONFIRMED"
+                        ? "booking-confirmed"
+                        : booking.booking_status === "CANCELLED"
+                          ? "booking-cancelled"
+                          : ""
+                    }
+                  >
+                    {booking.booking_status}
+                  </strong>
+                </p>
+
+                <p>
+                  Booked on:{" "}
+                  {booking.created_at
+                    ? new Date(
+                        booking.created_at
+                      ).toLocaleString()
+                    : "Not available"}
+                </p>
+
+                {booking.booking_status === "CONFIRMED" && (
+                  <button
+                    type="button"
+                    className="cancel-booking-button"
+                    onClick={() => handleCancel(booking.id)}
+                    disabled={cancellingId === booking.id}
+                  >
+                    {cancellingId === booking.id
+                      ? "Cancelling..."
+                      : "Cancel Booking"}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </section>
       )}
-
     </main>
   );
 }
 
 export default BookingHistory;
+ 

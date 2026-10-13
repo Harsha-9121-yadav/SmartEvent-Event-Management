@@ -1,16 +1,25 @@
 
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import NotificationDropdown from "./NotificationDropdown";
 
 function Navbar({ unreadCount, onUnreadCountChange }) {
+  const navigate = useNavigate();
+
   const [userRole, setUserRole] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem("access_token"))
+  );
 
   useEffect(() => {
+    let active = true;
+
     const fetchUserRole = async () => {
       const token = localStorage.getItem("access_token");
+
+      setIsLoggedIn(Boolean(token));
 
       if (!token) {
         setUserRole(null);
@@ -27,10 +36,17 @@ function Navbar({ unreadCount, onUnreadCountChange }) {
           }
         );
 
-        setUserRole(response.data.role);
+        if (active) {
+          setUserRole(
+            String(response.data.role || "").toUpperCase()
+          );
+        }
       } catch (error) {
         console.error("User role fetch error:", error);
-        setUserRole(null);
+
+        if (active) {
+          setUserRole(null);
+        }
       }
     };
 
@@ -40,16 +56,37 @@ function Navbar({ unreadCount, onUnreadCountChange }) {
       fetchUserRole();
     };
 
+    const handleAuthChange = () => {
+      fetchUserRole();
+    };
+
     window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("authChange", handleAuthChange);
+    window.addEventListener("focus", handleAuthChange);
 
     return () => {
+      active = false;
       window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authChange", handleAuthChange);
+      window.removeEventListener("focus", handleAuthChange);
     };
   }, []);
 
-  const isLoggedIn = Boolean(localStorage.getItem("access_token"));
   const isOrganizer = userRole === "ORGANIZER";
   const isAdmin = userRole === "ADMIN";
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("authToken");
+
+    setIsLoggedIn(false);
+    setUserRole(null);
+
+    window.dispatchEvent(new Event("authChange"));
+    navigate("/login");
+  };
 
   return (
     <header className="navbar">
@@ -102,7 +139,7 @@ function Navbar({ unreadCount, onUnreadCountChange }) {
           </>
         )}
 
-        {(isOrganizer || isAdmin) && (
+        {isOrganizer && (
           <NavLink
             to="/organizer-dashboard"
             className="nav-link organizer-nav-link"
@@ -148,7 +185,7 @@ function Navbar({ unreadCount, onUnreadCountChange }) {
             flexShrink: 0,
           }}
         >
-          {!isLoggedIn && (
+          {!isLoggedIn ? (
             <>
               <NavLink
                 to="/login"
@@ -166,6 +203,21 @@ function Navbar({ unreadCount, onUnreadCountChange }) {
                 Register
               </NavLink>
             </>
+          ) : (
+            <button
+              type="button"
+              className="nav-link"
+              onClick={handleLogout}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                font: "inherit",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Logout
+            </button>
           )}
         </div>
       </nav>
